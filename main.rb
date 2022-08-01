@@ -23,19 +23,14 @@ class CodeMaker
 
   def rate_guess(guess)
     rating = ['', '', '', '']
-    availabe = [1, 2, 3, 4]
     code.each_with_index do |color, index|
-      next unless guess.include? color
-
-      i = availabe.sample
-      availabe.delete(i)
-      rating[i] = if index == guess.index(color)
+      rating[index] = if color == guess[index]
                     'perfect'
-                  else
+                  elsif code.include? guess[index]
                     'exists'
                   end
     end
-    rating
+    rating.shuffle
   end
 end
 
