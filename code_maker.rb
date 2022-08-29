@@ -1,10 +1,11 @@
+# frozen_string_literal: true
 
 # class for the code maker
 class CodeMaker
   # 1 - take code maker input to make a code out of a fixed amount of colors
   # 2 - take in code breaker guess and rate it
   # 3 - return an array rating the player guesses if all are perfect game ends
-  include Game
+
   attr_reader :code
 
   def initialize(code)
@@ -22,19 +23,20 @@ class CodeMaker
                         'exists'
                       end
     end
-    rating.shuffle
+    rating
   end
 end
 
 class AICodeMaker < CodeMaker
-  def initialize
-    @code = generate_code
+  def initialize(colors)
+    @code = generate_code(colors)
   end
 
   private
-  def generate_code
-    4.times.map {
-      Game::COLORS.sample
-    }
+
+  def generate_code(colors)
+    4.times.map do
+      colors.sample
+    end
   end
 end
