@@ -4,7 +4,7 @@
 class CodeBreaker
   # 1 - initialize a codebreaker object with number of tries
   # 2 - make a guess function that takes and stores the breaker guess
-  attr_reader :tries, :guess
+  attr_reader :tries, :guess, :old_guess, :rating, :old_rating
 
   def initialize
     @guess = []
@@ -22,21 +22,33 @@ class AICodeBreaker < CodeBreaker
     @old_guess = ''
     @old_rating = ''
     @current_rating = ''
-    @guess = ''
     super
   end
 
   def make_guess(colors, _old_rating = '')
-    if @old_rating == ''
+    if @guess.length == 0
       puts "no old rating"
       4.times.each do |i|
         color = colors.sample
         color = colors.sample while @guess.include? color
         @guess[i] = color
       end
-      @old_guess = @guess
       @guess
+    elsif @guess != '' && @old_guess == ''
+      puts "checking this one"
+      next_guess = @guess.map do |color|
+        color
+      end
+      2.times.each do
+        next_guess.delete_at(rand(next_guess.length))
+      end
+      colors.each do |color|
+        next_guess.append(color) if !@guess.include? color
+      end
+      @old_guess = @guess
+      @guess = next_guess
     else
+      puts "else"
       @guess = process_guess
     end
 
@@ -44,11 +56,9 @@ class AICodeBreaker < CodeBreaker
   end
 
   def check_rating(rating)
-    @old_rating = if @old_rating == ''
-                    rating
-                  else
-                    @current_rating
-                  end
+    if @current_rating != ''
+      @old_rating = @current_rating
+    end
     @current_rating = rating
   end
 
@@ -59,6 +69,16 @@ class AICodeBreaker < CodeBreaker
   end
 
   def process_guess
-
+    next_guess = ['', '', '', '']
+    @old_guess = guess
+    next_guess
   end
 end
+
+
+
+colors = %w[blue yellow red green orange purple].freeze
+
+ai = AICodeBreaker.new
+puts ai.make_guess(colors)
+puts ai.make_guess(colors)
