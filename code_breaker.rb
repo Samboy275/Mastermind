@@ -19,14 +19,14 @@ end
 class AICodeBreaker < CodeBreaker
   def initialize
     @solution = Array.new(4)
-    @old_guess = ''
-    @old_rating = ''
-    @current_rating = ''
+    @old_guess = []
+    @old_rating = []
+    @current_rating = []
     super
   end
 
   def make_guess(colors, _old_rating = '')
-    if @guess.length == 0
+    if @guess.empty?
       puts "no old rating"
       4.times.each do |i|
         color = colors.sample
@@ -34,7 +34,7 @@ class AICodeBreaker < CodeBreaker
         @guess[i] = color
       end
       @guess
-    elsif @guess != '' && @old_guess == ''
+    elsif !@guess.empty? && @old_guess.empty?
       puts "checking this one"
       next_guess = @guess.map do |color|
         color
@@ -45,7 +45,9 @@ class AICodeBreaker < CodeBreaker
       colors.each do |color|
         next_guess.append(color) if !@guess.include? color
       end
-      @old_guess = @guess
+      @old_guess = @guess.map do |color|
+        color
+      end
       @guess = next_guess
     else
       puts "else"
@@ -56,8 +58,10 @@ class AICodeBreaker < CodeBreaker
   end
 
   def check_rating(rating)
-    if @current_rating != ''
-      @old_rating = @current_rating
+    if !@current_rating.empty?
+      @old_rating = @current_rating.map do |rate|
+        rate
+      end
     end
     @current_rating = rating
   end
@@ -70,7 +74,9 @@ class AICodeBreaker < CodeBreaker
 
   def process_guess
     next_guess = ['', '', '', '']
-    @old_guess = guess
+
+    @old_guess = @guess
+    @guess = next_guess
     next_guess
   end
 end
