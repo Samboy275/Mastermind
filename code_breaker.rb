@@ -77,7 +77,7 @@ class AICodeBreaker < CodeBreaker
     if @old_rating.include? 'perfect' || @rating.include? 'perfect'
       next_guess = perfect_process(next_guess)
     else
-      next_guess = imprefect_process(next_guess)
+      next_guess = imprefect_process()
     end
     @old_guess = @guess
     @guess = next_guess
@@ -116,15 +116,25 @@ class AICodeBreaker < CodeBreaker
     next_guess
   end
 
-  def imprefect_process(next_guess)
+  def imprefect_process()
     exsists = []
+    if @rating.count 'exists' == 4
+      return @guess.shuffle
+    end
+    if @rating.count 'exists' > @old_rating.count 'exists'
+      exists = @guess - @old_guess
+    elsif @rating.count 'exists' < @old_rating.count 'exsists'
+      exsists = @old_guess - @guess
+    else
+      exists = @uess & @old_guess
+    end
+
+    while exists.count < 4
+      color = (@guess & old_guess).sample while exists.include? color
+      exists.append color
+    end
+    exists.shuffle
   end
 end
 
 
-
-colors = %w[blue yellow red green orange purple].freeze
-
-ai = AICodeBreaker.new
-puts ai.make_guess(colors)
-puts ai.make_guess(colors)
