@@ -74,8 +74,10 @@ class AICodeBreaker < CodeBreaker
 
   def process_guess
     next_guess = ['', '', '', '']
-    if @old_rating.include? 'perfect'
+    if @old_rating.include? 'perfect' || @rating.include? 'perfect'
       next_guess = perfect_process(next_guess)
+    else
+      next_guess = imprefect_process(next_guess)
     end
     @old_guess = @guess
     @guess = next_guess
@@ -85,33 +87,37 @@ class AICodeBreaker < CodeBreaker
 
   def perfect_process(next_guess)
     perfects = []
-      chosen_guess = []
-      if @rating.count 'perfect' > @old_rating.count 'perfect'
-        perfects = @guess - @old_guess
-        chosen_guess = @guess
-        elsif @rating.count 'perfect' < @old_rating.count 'perfect'
-          perfects = @old_guess - @guess
-          chosen_guess = @old_guess
-        else
-          perfects = @guess & @old_guess
-          chosen_guess = @guess
-        end
-        chosen_guess.each_with_index do |item, index|
-          if perfects.include? item
-            next_guess[index] = item
-          end
+    chosen_guess = []
+    if @rating.count 'perfect' > @old_rating.count 'perfect'
+      perfects = @guess - @old_guess
+      chosen_guess = @guess
+    elsif @rating.count 'perfect' < @old_rating.count 'perfect'
+      perfects = @old_guess - @guess
+      chosen_guess = @old_guess
+    else
+      perfects = @guess & @old_guess
+      chosen_guess = @guess
+    end
+    chosen_guess.each_with_index do |item, index|
+      if perfects.include? item
+        next_guess[index] = item
       end
-      next_guess.count('').times do
-        index = next_guess.find_index('')
-        color = ''
-        if @old_rating.count 'exists' > @rating.count 'exists'
-          color = @old_guess.sample while next_guess.include? sample
-        else
-          color = @guess.sample while next_guess.include? sample
-        end
-        next_guess[index] = color
+    end
+    next_guess.count('').times do
+      index = next_guess.find_index('')
+      color = ''
+      if @old_rating.count 'exists' > @rating.count 'exists'
+         color = @old_guess.sample while next_guess.include? sample
+      else
+        color = @guess.sample while next_guess.include? sample
       end
-      next_guess
+      next_guess[index] = color
+      end
+    next_guess
+  end
+
+  def imprefect_process(next_guess)
+    exsists = []
   end
 end
 
