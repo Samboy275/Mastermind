@@ -27,7 +27,6 @@ class AICodeBreaker < CodeBreaker
 
   def make_guess(colors, _old_rating = '')
     if @guess.empty?
-      puts "no old rating"
       4.times.each do |i|
         color = colors.sample
         color = colors.sample while @guess.include? color
@@ -35,7 +34,6 @@ class AICodeBreaker < CodeBreaker
       end
       @guess
     elsif !@guess.empty? && @old_guess.empty?
-      puts "checking this one"
       next_guess = @guess.map do |color|
         color
       end
@@ -50,8 +48,7 @@ class AICodeBreaker < CodeBreaker
       end
       @guess = next_guess
     else
-      puts "else"
-      @guess = process_guess
+      @guess = process_guess(colors)
     end
 
     @guess
@@ -72,12 +69,12 @@ class AICodeBreaker < CodeBreaker
     @guess + @old_guess - (@guess & @old_guess)
   end
 
-  def process_guess
+  def process_guess(colors)
     next_guess = ['', '', '', '']
-    if @old_rating.include? 'perfect' || @rating.include? 'perfect'
-      next_guess = perfect_process(next_guess)
+    if @old_rating.include?('perfect') || @current_rating.include?('perfect')
+      next_guess = perfect_process(next_guess, colors)
     else
-      next_guess = imprefect_process()
+      next_guess = imprefect_process(colors)
     end
     @old_guess = @guess
     @guess = next_guess
@@ -85,13 +82,13 @@ class AICodeBreaker < CodeBreaker
   end
 
 
-  def perfect_process(next_guess)
+  def perfect_process(next_guess, colors)
     perfects = []
     chosen_guess = []
-    if @rating.count 'perfect' > @old_rating.count 'perfect'
+    if @current_rating.count('perfect') > @old_rating.count('perfect')
       perfects = @guess - @old_guess
       chosen_guess = @guess
-    elsif @rating.count 'perfect' < @old_rating.count 'perfect'
+    elsif @current_rating.count('perfect') < @old_rating.count('perfect')
       perfects = @old_guess - @guess
       chosen_guess = @old_guess
     else
@@ -99,38 +96,38 @@ class AICodeBreaker < CodeBreaker
       chosen_guess = @guess
     end
     chosen_guess.each_with_index do |item, index|
-      if perfects.include? item
+      if perfects.include?(item)
         next_guess[index] = item
       end
     end
     next_guess.count('').times do
       index = next_guess.find_index('')
       color = ''
-      if @old_rating.count 'exists' > @rating.count 'exists'
-         color = @old_guess.sample while next_guess.include? sample
+      if @old_rating.count('exsits') > @current_rating.count('exists')
+         color = @old_guess.sample while next_guess.include?(color)
       else
-        color = @guess.sample while next_guess.include? sample
+        color = colors.sample while next_guess.include?(color)
       end
       next_guess[index] = color
       end
     next_guess
   end
 
-  def imprefect_process()
-    exsists = []
-    if @rating.count 'exists' == 4
+  def imprefect_process(colors)
+    exists = []
+    if @current_rating.count('exists') == 4
       return @guess.shuffle
     end
-    if @rating.count 'exists' > @old_rating.count 'exists'
+    if @current_rating.count('exists') > @old_rating.count('exists')
       exists = @guess - @old_guess
-    elsif @rating.count 'exists' < @old_rating.count 'exsists'
-      exsists = @old_guess - @guess
+    elsif @current_rating.count('exists') < @old_rating.count('exists')
+      exists = @old_guess - @guess
     else
-      exists = @uess & @old_guess
+      exists = @guess & @old_guess
     end
 
     while exists.count < 4
-      color = (@guess & old_guess).sample while exists.include? color
+      color = colors.sample until !(@guess & @old_guess).include?(color)
       exists.append color
     end
     exists.shuffle

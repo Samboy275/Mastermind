@@ -15,13 +15,13 @@ class CodeMaker
   end
 
   def rate_guess(guess)
-    rating = ['', '', '', '']
+    rating = { perfect: 0, exists: 0}
     code.each_with_index do |color, index|
-      rating[index] = if color == guess[index]
-                        'perfect'
-                      elsif code.include? guess[index]
-                        'exists'
-                      end
+      if color == guess[index]
+        rating[:perfect] += 1
+      elsif code.include? guess[index]
+        rating[:exists] += 1
+      end
     end
     rating
   end
@@ -35,8 +35,12 @@ class AICodeMaker < CodeMaker
   private
 
   def generate_code(colors)
+    code = []
     4.times.map do
-      colors.sample
+      color = 'c'
+      color = colors.sample until !code.include?(color) && color != 'c'
+      code.append(color)
     end
+    code
   end
 end

@@ -5,7 +5,7 @@ require './code_breaker'
 # module to manage the game
 module Game
   COLORS = %w[blue yellow red green orange purple].freeze
-  TURNS = 6
+  TURNS = 12
   def self.new_game(code)
     @code = code.split('-')
   end
@@ -31,13 +31,14 @@ module Game
         player = CodeBreaker.new
         player_won = false
         ai = AICodeMaker.new(Game::COLORS)
-        puts ai.code
       end
 
       TURNS.times do
         if player.is_a? CodeMaker
           guess = ai.make_guess(Game::COLORS)
-          puts guess
+          puts "Computer guess: #{guess.each.map do |color|
+            "#{color} -"
+        end.join(' ')}"
           rating = player.rate_guess(guess)
           if rating.count('perfect') == 4
             player_won = false
@@ -46,18 +47,18 @@ module Game
           ai.check_rating(rating)
         else
           puts "Enter your prediction in lowercase in the following pattern color-color-color-color out of #{Game::COLORS.each_with_index.map do |color, index|
-                                                                                                               "#{index + 1}- #{color}"
-                                                                                                             end.join(' ')}"
+            "#{index + 1}- #{color}"
+          end.join(' ')}"
           guess = gets.chomp
           guess = guess.split('-')
           rating = ai.rate_guess(guess)
-          if rating.count('perfect') == 4
+          if rating[:perfect] == 4
             player_won = true
             break
           end
         end
-        puts "Perfect: #{rating.count('perfect')}"
-        puts "Exists : #{rating.count('exists')}"
+        puts "Perfect: #{rating[:perfect]}"
+        puts "Exists : #{rating[:exists]}"
       end
 
       if player_won
