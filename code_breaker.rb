@@ -31,7 +31,8 @@ class AICodeBreaker < CodeBreaker
     if @guess.empty?
       @guess = [@colors[0], @colors[0], @colors[1], @colors[1]]
     elsif @old_guess.empty?
-      @guess = [@colors[10], @colors[1], @colors[0], @colord[0]]
+
+      @guess = [@colors[1], @colors[1], @colors[0], @colord[0]]
     else
       #process another guess
     end
