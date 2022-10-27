@@ -31,18 +31,16 @@ class AICodeBreaker < CodeBreaker
     if @guess.empty?
       @guess = [@colors[0], @colors[0], @colors[1], @colors[1]]
     elsif @old_guess.empty?
-
       @guess = [@colors[1], @colors[1], @colors[0], @colord[0]]
     else
       #process another guess
+      check_for_perfects()
     end
   end
 
   def check_rating(rating)
     if !@current_rating.empty?
-      @old_rating = @current_rating.map do |rate|
-        rate
-      end
+      @old_rating = @current_rating
     end
     @current_rating = rating
   end
@@ -53,9 +51,25 @@ class AICodeBreaker < CodeBreaker
     @guess + @old_guess - (@guess & @old_guess)
   end
 
-  def process_guess(colors)
+  def process_guess()
 
   end
+
+  def check_for_perfects()
+    if @old_rating[:perfect] > 0
+      solutions.filter do |pattern|
+        possible_solution = false
+        pattern.each_with_index do |color, index|
+          if color == @old_guess[index]
+            possible_solution = true
+            break
+          end
+        end
+        possible_solution
+      end
+    elsif @old_rating[:exists] > 0
+
+    end
 end
 
 
