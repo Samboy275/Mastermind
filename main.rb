@@ -26,7 +26,7 @@ module Game
         player_code = ''
         player_code = gets.chomp until player_code.match?(/[0-9]-[0-9]-[0-9]-[0-9]/)
         player = CodeMaker.new(player_code)
-        ai = AICodeBreaker.new
+        ai = AICodeBreaker.new(Game::COLORS)
       else
         player = CodeBreaker.new
         player_won = false
@@ -37,10 +37,10 @@ module Game
         if player.is_a? CodeMaker
           guess = ai.make_guess(Game::COLORS)
           puts "Computer guess: #{guess.each.map do |color|
-            "#{color} -"
-        end.join(' ')}"
+          "#{color}"
+        end.join('-')}"
           rating = player.rate_guess(guess)
-          if rating.count('perfect') == 4
+          if rating[:perfect] == 4
             player_won = false
             break
           end
