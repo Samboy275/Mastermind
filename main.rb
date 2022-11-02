@@ -35,7 +35,7 @@ module Game
 
       TURNS.times do
         if player.is_a? CodeMaker
-          guess = ai.make_guess(Game::COLORS)
+          guess = ai.make_guess()
           puts "Computer guess: #{guess.each.map do |color|
           "#{color}"
         end.join('-')}"

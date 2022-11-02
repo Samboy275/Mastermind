@@ -28,7 +28,7 @@ class AICodeBreaker < CodeBreaker
     super()
   end
 
-  def make_guess(_rating = '')
+  def make_guess()
     @old_guess = @guess
     if @guess.empty?
       @guess = [@colors[0], @colors[0], @colors[1], @colors[1]]
@@ -44,64 +44,51 @@ class AICodeBreaker < CodeBreaker
   end
 
   def check_rating(rating)
-    @old_rating = @rating if !@rating.empty?
-    @rating = rating
-    if @rating[:perfect] > 0
-      length_before = @solutions.length
-      @solutions.filter! do |pattern|
-        possible_solution = false
-        pattern.each_with_index do |color, index|
-          if color == @guess[index]
-            possible_solution = true
-            break
+    if @rating.empty?
+      @old_rating = @rating
+
+      if rating[:perfect] > 0 || rating[:exists] > 0
+        @solutions.filter! do |pattern|
+          pattern.include?(@colors[0]) || pattern.include?(@colors[1])
+        end
+        if rating[:exists] == 2
+          @solutions.filter! do |pattern|
+           pattern[0] != @colors[0] && pattern[1] != @colors[0] && pattern[2] != @colors[1] && pattern[3] != @colors[1]
+          end
+        elsif rating[:perfect] > 0
+          @solutions.filter! do |pattern|
+            pattern[0] == @colors[0] || pattern[1] == @colors[0] || pattern[2] == @colors[1] || pattern[3] == @colors[1]
           end
         end
-        possible_solution
       end
-      if @solutions.length == length_before
-        perfects = []
-        if @old_rating[:perfect] > @rating[:perfect]
-          perfects = @old_guess - @guess
-        elsif @old_rating[:perfect] < @old_rating[:perfect]
-          perfects = @guess - @old_guess
-        else
-          perfects = @old_guess & @guess
-        end
-
+    else
+      @old_rating = @rating
+      if rating[:perfect] > 0 || rating[:exists] > 0
         @solutions.filter! do |pattern|
           possible_solution = false
-          pattern.each_with_index do |color, index|
-            if perfects.include?(color)
-              if color == @guess[index]
-                possible_solution = true
-              end
+          @guess.each do |color|
+            if pattern.include?(color)
+              possible_solution = true
+              break
+            end
+          end
+          possible_solution
+        end
+      else
+        @solutions.filter! do |pattern|
+          possible_solution = false
+          @guess.each do |color|
+            if !pattern.include?(color)
+              possible_solution = true
+              break
             end
           end
           possible_solution
         end
       end
-    elsif @rating[:exists] > 0
-      @solutions.filter! do |pattern|
-        possible_solution = false
-        @guess.each_with_index do |color, index|
-          if pattern.include?(color) && @guess[index] != pattern[index]
-            possible_solution = true
-            break
-          end
-        end
-        possible_solution
-      end
-    else
-      @solutions.filter! do |pattern|
-        possible_solution = true
-        @guess.each do |color|
-          if pattern.include?(color)
-            possible_solution = false
-          end
-        end
-        possible_solution
-      end
     end
+    @rating = rating
+
     puts @solutions.length
   end
 
