@@ -59,37 +59,11 @@ class AICodeBreaker < CodeBreaker
           @solutions.filter! do |pattern|
             pattern[0] == @colors[0] || pattern[1] == @colors[0] || pattern[2] == @colors[1] || pattern[3] == @colors[1]
           end
-        end
-      end
-    else
-      @old_rating = @rating
-      if rating[:perfect] > 0 || rating[:exists] > 0
-        @solutions.filter! do |pattern|
-          possible_solution = false
-          @guess.each do |color|
-            if pattern.include?(color)
-              possible_solution = true
-              break
-            end
-          end
-          possible_solution
-        end
-      else
-        @solutions.filter! do |pattern|
-          possible_solution = false
-          @guess.each do |color|
-            if !pattern.include?(color)
-              possible_solution = true
-              break
-            end
-          end
-          possible_solution
+
         end
       end
     end
     @rating = rating
-
-    puts @solutions.length
   end
 
   private
