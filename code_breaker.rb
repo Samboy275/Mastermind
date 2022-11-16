@@ -46,23 +46,54 @@ class AICodeBreaker < CodeBreaker
   def check_rating(rating)
     if @rating.empty?
       @old_rating = @rating
-
-      if rating[:perfect] > 0 || rating[:exists] > 0
-        @solutions.filter! do |pattern|
-          pattern.include?(@colors[0]) || pattern.include?(@colors[1])
-        end
-        if rating[:exists] == 2
-          @solutions.filter! do |pattern|
-           pattern[0] != @colors[0] && pattern[1] != @colors[0] && pattern[2] != @colors[1] && pattern[3] != @colors[1]
+    end
+    if rating[:perfect] == 0
+      @solutions.filter! do |pattern|
+        is_solution = true
+        pattern.each_with_index do |color, index|
+          if @guess[index] == color
+            is_solution = false
+            break
           end
-        elsif rating[:perfect] > 0
-          @solutions.filter! do |pattern|
-            pattern[0] == @colors[0] || pattern[1] == @colors[0] || pattern[2] == @colors[1] || pattern[3] == @colors[1]
-          end
-
         end
+        is_solution
+      end
+    else
+      @solutions.filter! do |pattern|
+        is_solution = false
+        pattern.each_with_index do |color, index|
+          if @guess[index] == color
+            is_solution = true
+            break
+          end
+        end
+        is_solution
       end
     end
+    if rating[:exists] > 0
+      @solutions.filter! do |pattern|
+        is_solution = false
+        pattern.each do |color|
+          if @guess.include?(color)
+            is_solution = true
+            break
+          end
+        end
+        is_solution
+      end
+    elsif rating[:perfect] == 0
+      @solutions.filter! do |pattern|
+        is_solution = true
+        pattern.each do |color|
+          if @guess.include?(color)
+            is_solution = false
+            break
+          end
+        end
+        is_solution
+      end
+    end
+    puts @solutions.length
     @rating = rating
   end
 

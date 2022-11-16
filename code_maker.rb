@@ -21,9 +21,8 @@ class CodeMaker
     @code.each_with_index do |color, index|
       if color == guess[index]
         rating[:perfect] += 1
-        if rated.include?(color) && @code.count(color) == 1
-          rating[:exists] = rating[:exists] - 1
-          rated.delete(color)
+        if rated.include?(color)
+          rating[:exists] = 0
         end
         rated.append(color)
       elsif guess.include?(color) && !rated.include?(color)
