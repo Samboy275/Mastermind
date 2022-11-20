@@ -15,20 +15,19 @@ class CodeMaker
   end
 
   def rate_guess(guess)
-    rating = { perfect: 0, exists: 0}
+    rating = ['','','','']
     rated = []
 
-    @code.each_with_index do |color, index|
-      if color == guess[index]
-        rating[:perfect] += 1
-        if rated.include?(color)
-          rating[:exists] = 0
-        end
-        rated.append(color)
-      elsif guess.include?(color) && !rated.include?(color)
-        rating[:exists] += 1
-        rated.append(color)
-      end
+    guess.each_with_index do |color, index|
+      if @code[index] == color
+        rating[index] = 'perfect'
+        rated.append(index)
+    end
+
+
+    guess.each_with_index do |color, index|
+    next if rated.include?(index)
+
     end
     rating
   end

@@ -47,113 +47,14 @@ class AICodeBreaker < CodeBreaker
     if @rating.empty?
       @old_rating = @rating
     end
-    if rating[:perfect] == 0
-      @solutions.filter! do |pattern|
-        is_solution = true
-        pattern.each_with_index do |color, index|
-          if @guess[index] == color
-            is_solution = false
-            break
-          end
-        end
-        is_solution
-      end
-    else
-      @solutions.filter! do |pattern|
-        is_solution = false
-        pattern.each_with_index do |color, index|
-          if @guess[index] == color
-            is_solution = true
-            break
-          end
-        end
-        is_solution
-      end
-    end
-    if rating[:exists] > 0
-      @solutions.filter! do |pattern|
-        is_solution = false
-        pattern.each do |color|
-          if @guess.include?(color)
-            is_solution = true
-            break
-          end
-        end
-        is_solution
-      end
-    elsif rating[:perfect] == 0
-      @solutions.filter! do |pattern|
-        is_solution = true
-        pattern.each do |color|
-          if @guess.include?(color)
-            is_solution = false
-            break
-          end
-        end
-        is_solution
-      end
-    end
-    puts @solutions.length
     @rating = rating
+    process_guess()
   end
 
   private
 
   def process_guess()
 
-  end
-
-  def check_for_perfects()
-    if @rating[:perfect] > 0
-      @solutions.filter! do |pattern|
-        possible_solution = false
-        pattern.each_with_index do |color, index|
-          if color == @guess[index]
-            possible_solution = true
-            break
-          end
-        end
-        possible_solution
-      end
-    else
-      @solutions.filter! do |pattern|
-        possible_solution = false
-        pattern.each_with_index do |color, index|
-          if color != @guess[index]
-            possible_solution = true
-            break
-          end
-        end
-        possible_solution
-      end
-    end
-  end
-
-
-  def check_for_exsits()
-    if @rating[:exists] > 0
-      @solutions.filter! do |pattern|
-        possible_solution = false
-        @guess.each do |color|
-          if pattern.include?(color)
-            possible_solution = true
-            break
-          end
-        end
-        possible_solution
-      end
-    elsif @rating[:perfect] == 0
-      @solutions.filter! do |pattern|
-        possible_solution = true
-        @guess.each do |color|
-          if pattern.include?(color)
-            possible_solution = false
-            break
-          end
-        end
-        possible_solution
-      end
-    end
   end
 end
 

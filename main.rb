@@ -40,7 +40,7 @@ module Game
           "#{color}"
         end.join('-')}"
           rating = player.rate_guess(guess)
-          if rating[:perfect] == 4
+          if rating.count('perfect') == 4
             player_won = false
             break
           end
@@ -52,13 +52,12 @@ module Game
           guess = gets.chomp
           guess = guess.split('-')
           rating = ai.rate_guess(guess)
-          if rating[:perfect] == 4
+          if rating.count('perfect') == 4
             player_won = true
             break
           end
         end
-        puts "Perfect: #{rating[:perfect]}"
-        puts "Exists : #{rating[:exists]}"
+        puts "Rating: #{rating}"
       end
 
       if player_won
