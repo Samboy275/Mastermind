@@ -34,7 +34,7 @@ module Game
       end
 
       TURNS.times do
-        if player.is_a? CodeMaker
+        if player.is_a?(CodeMaker)
           guess = ai.make_guess()
           puts "Computer guess: #{guess.each.map do |color|
           "#{color}"
@@ -57,7 +57,9 @@ module Game
             break
           end
         end
-        puts "Rating: #{rating}"
+        puts "Rating: #{rating.each.map do |color|
+          "#{color}"
+        end.join('-')}"
       end
 
       if player_won

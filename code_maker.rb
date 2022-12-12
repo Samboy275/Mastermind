@@ -17,19 +17,25 @@ class CodeMaker
   def rate_guess(guess)
     rating = ['','','','']
     rated = []
-
+    unrated_color = @code.map(&:clone)
     guess.each_with_index do |color, index|
       if @code[index] == color
         rating[index] = 'perfect'
         rated.append(index)
+        unrated_color.delete_at(index)
+      end
     end
 
 
     guess.each_with_index do |color, index|
-    next if rated.include?(index)
-
-    end
+      if unrated_color.include?(color)
+        rating[index] = 'exists'
+      end
+    puts "Rating: #{rating.each.map do |color|
+      "#{color}"
+    end.join('|,|')}"
     rating
+    end
   end
 end
 
