@@ -1,58 +1,46 @@
 # frozen_string_literal: true
 
-# class for the code maker
 class CodeMaker
-  # 1 - take code maker input to make a code out of a fixed amount of colors
-  # 2 - take in code breaker guess and rate it
-  # 3 - return an array rating the player guesses if all are perfect game ends
-
   attr_reader :code
 
   def initialize(code)
-    @code = code.split('-').map do |index|
-      Game::COLORS[index.to_i - 1]
-    end
+    @code = if code.length == 6
+              generate_code(code)
+            else
+              code.map do |color|
+                color
+              end
+
+            end
   end
 
   def rate_guess(guess)
-    rating = ['','','','']
-    rated = []
-    unrated_color = @code.map(&:clone)
+    # this function should return a rating
+    rating = ['', '', '', '']
+    # cloning the color values to keep unrated colors in check
+    rated_colors = []
     guess.each_with_index do |color, index|
-      if @code[index] == color
+      rating[index] = ' '
+      if color == @code[index]
         rating[index] = 'perfect'
-        rated.append(index)
-        unrated_color.delete_at(index)
-      end
-    end
-
-
-    guess.each_with_index do |color, index|
-      if unrated_color.include?(color)
+      elsif @code.include?(color)
         rating[index] = 'exists'
+        rating[index] = ' ' if rated_colors.include?(color) && (@code.count(color) == rated_colors.count(color))
       end
-    puts "Rating: #{rating.each.map do |color|
-      "#{color}"
-    end.join('|,|')}"
-    rating
+      rated_colors.append(color)
     end
-  end
-end
 
-class AICodeMaker < CodeMaker
-  def initialize(colors)
-    @code = generate_code(colors)
+    rating
   end
-
-  private
 
   def generate_code(colors)
-    code = []
+    # computer generated code
+    generated_code = []
     4.times.map do
-      color = 'c'
-      color = colors.sample until !code.include?(color) && color != 'c'
-      code.append(color)
+      color = colors.sample
+      generated_code.append(color)
     end
-    code
+    puts generated_code
+    generated_code
   end
 end
